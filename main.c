@@ -1,4 +1,3 @@
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +8,7 @@
 
 typedef struct {
   char *str;
-  size_t len;
+  int len;
 } String;
 
 int main() {
@@ -34,10 +33,7 @@ int main() {
 
       if(num_elements > num_elements_allocated) {
         num_elements_allocated += 3;
-        String *new_path_dirs = malloc(sizeof(String) * num_elements_allocated);
-        memcpy(new_path_dirs, path_dirs, sizeof(String) * (num_elements - 1));
-        free(path_dirs);
-        path_dirs = new_path_dirs;
+        path_dirs = realloc(path_dirs, sizeof(String) * num_elements_allocated);
       }
 
       path_dirs[num_elements - 1].str = path_env + start;
