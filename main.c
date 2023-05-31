@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,25 +9,27 @@
 
 typedef struct {
   char *str;
-  int len;
+  size_t len;
 } String;
 
 int main() {
   // Get contents of path env variable
   char *path_env = getenv("PATH");
-  int path_env_len = strlen(path_env);
   if(path_env == NULL) {
     fprintf(stderr, "No PATH environment variable was found\n");
     exit(1);
   }
+  int path_env_len = strlen(path_env);
 
-  // Store path dirs in array
+  printf("%s\n", path_env);
+
+  // Store path dirs in an array
   int num_elements = 0;
   int num_elements_allocated = BASE_PATH_DIRS_LENGTH;
   String *path_dirs = malloc(sizeof(String) * num_elements_allocated);
   int start = 0;
-  for(int i = 0; i < path_env_len - 1; i++) {
-    if(path_env[i] == ':') {
+  for(int i = 0; i <= path_env_len; i++) {
+    if(path_env[i] == ':' || path_env[i] == 0) {
       num_elements++;
 
       if(num_elements > num_elements_allocated) {
@@ -37,11 +40,15 @@ int main() {
         path_dirs = new_path_dirs;
       }
 
-      String new_path = {
-        .str = path_env + start,
-        .len = i - start
-      };
+      path_dirs[num_elements - 1].str = path_env + start;
+      path_dirs[num_elements - 1].len = i - start;
+
+      start = i + 1;
     }
+  }
+
+  for(int i = 0; i < num_elements; i++) {
+    printf("TEST: %.*s\n", path_dirs[i].len, path_dirs[i].str);
   }
   
   char *input = readline("$ ");
